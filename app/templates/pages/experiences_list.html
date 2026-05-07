@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Experiences — Air{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Experiences on Air</h1>
+        <p class="text-gray-500 mt-1">Discover unique activities and adventures</p>
+    </div>
+
+    {% if experiences %}
+        <p class="text-gray-500 text-sm mb-5">{{ experiences|length }} experience{{ 's' if experiences|length != 1 else '' }} available</p>
+        {% from 'components/listing_card.html' import listing_card %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for experience in experiences %}
+                {{ listing_card(experience, 'experience') }}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
+            <i data-lucide="compass" class="w-12 h-12 text-gray-300 mx-auto mb-4"></i>
+            <h2 class="text-xl font-semibold text-gray-700 mb-2">No experiences yet</h2>
+            <p class="text-gray-400 mb-6">Be the first to list an experience on Air.</p>
+            {% if session.get('role') == 'host' %}
+            <a href="/experiences/create" class="gradient-blue text-white font-semibold px-5 py-2.5 rounded-xl text-sm hover:opacity-90 transition-opacity">
+                List an Experience
+            </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

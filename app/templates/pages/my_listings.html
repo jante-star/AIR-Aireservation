@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}My Listings — Air{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">My Listings</h1>
+            <p class="text-gray-500 mt-1">Manage your properties and experiences</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="/homes/create" class="gradient-blue text-white font-semibold px-4 py-2.5 rounded-xl text-sm hover:opacity-90 transition-opacity flex items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i> New Listing
+            </a>
+        </div>
+    </div>
+
+    {% if listings %}
+    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+        <table class="w-full">
+            <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                    <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Listing</th>
+                    <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
+                    <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Price</th>
+                    <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for listing in listings %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-gradient-to-br from-blue-100 to-blue-200 flex-shrink-0">
+                                {% if listing.images and listing.images|length > 0 %}
+                                    <img src="{{ listing.images[0] }}" alt="{{ listing.title }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <div class="w-full h-full gradient-blue flex items-center justify-center">
+                                        <i data-lucide="home" class="w-5 h-5 text-white opacity-50"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <div class="font-semibold text-gray-900 line-clamp-1">{{ listing.title }}</div>
+                                <div class="text-gray-400 text-xs mt-0.5">
+                                    {{ listing.location.city if listing.location else '' }}
+                                    {% if listing.aiConfig and listing.aiConfig.enabled %}
+                                    • <span class="text-blue-500">AI Enabled</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full
+                            {% if listing.status == 'published' %}bg-green-100 text-green-700
+                            {% else %}bg-yellow-100 text-yellow-700{% endif %}">
+                            {{ listing.status|capitalize }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="font-semibold text-gray-900">${{ "%.0f"|format(listing.price) }}</span>
+                        <span class="text-gray-400 text-xs">/night</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            <a href="/homes/{{ listing.id }}"
+                               class="text-blue-600 text-sm font-medium hover:underline">View</a>
+                            <a href="/homes/{{ listing.id }}/edit"
+                               class="text-gray-600 text-sm font-medium hover:underline">Edit</a>
+                            {% if listing.status != 'published' %}
+                            <form method="POST" action="/homes/{{ listing.id }}/publish" class="inline">
+                                <button type="submit" class="text-green-600 text-sm font-medium hover:underline">Publish</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
+        <i data-lucide="home" class="w-12 h-12 text-gray-300 mx-auto mb-4"></i>
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">No listings yet</h2>
+        <p class="text-gray-400 mb-6">Create your first listing to start earning on Air.</p>
+        <a href="/homes/create" class="gradient-blue text-white font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition-opacity">
+            Create a Listing
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

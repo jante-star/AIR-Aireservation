@@ -1,0 +1,12 @@
+.gradient-blue {
+    background: linear-gradient(135deg, #0066cc 0%, #00a8e8 100%);
+}
+.gradient-text {
+    background: linear-gradient(135deg, #0066cc 0%, #00a8e8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+.line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }

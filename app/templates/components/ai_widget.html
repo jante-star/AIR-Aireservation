@@ -1,0 +1,31 @@
+{% if listing and listing.aiConfig and listing.aiConfig.enabled %}
+<div class="mt-8 rounded-2xl gradient-blue p-6 text-white">
+    <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <i data-lucide="zap" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <h3 class="font-bold text-lg">Air AI Voice Agent</h3>
+            <p class="text-blue-100 text-sm">Ask questions about this listing using voice</p>
+        </div>
+    </div>
+
+    <p class="text-blue-100 text-sm mb-4">
+        Our AI agent can answer any questions about availability, amenities, local tips, and help you book — all via voice.
+    </p>
+
+    <div id="call-status" class="text-sm text-blue-200 mb-3 min-h-5"></div>
+
+    <button
+        id="ai-call-btn"
+        data-listing-id="{{ listing.id }}"
+        data-agent-id="{{ listing.aiConfig.agentId }}"
+        class="flex items-center gap-2 bg-white text-blue-600 font-semibold px-5 py-2.5 rounded-full hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        <i data-lucide="mic" class="w-4 h-4"></i>
+        Start Voice Chat
+    </button>
+</div>
+
+<script src="https://unpkg.com/retell-client-js-sdk@latest/dist/index.js"></script>
+<script src="/static/js/retell_ai.js"></script>
+{% endif %}

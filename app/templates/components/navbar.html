@@ -1,0 +1,73 @@
+<nav class="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 gap-4">
+
+            <!-- Logo -->
+            <a href="/" class="flex items-center gap-2 flex-shrink-0">
+                <div class="w-8 h-8 rounded-lg gradient-blue flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">A</span>
+                </div>
+                <div class="leading-tight">
+                    <div class="font-bold text-lg gradient-text">Air</div>
+                    <div class="text-gray-400 text-xs -mt-1">AI Reservations</div>
+                </div>
+            </a>
+
+            <!-- Search bar -->
+            <form action="/search" method="GET" class="flex-1 max-w-md hidden sm:block">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ request.args.get('q', '') }}"
+                        placeholder="Search homes, experiences, events..."
+                        class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                    >
+                </div>
+            </form>
+
+            <!-- Nav links + auth -->
+            <div class="flex items-center gap-4">
+                <a href="/homes" class="text-sm text-gray-600 hover:text-blue-600 font-medium hidden md:block">Homes</a>
+                <a href="/experiences" class="text-sm text-gray-600 hover:text-blue-600 font-medium hidden md:block">Experiences</a>
+                <a href="/parties" class="text-sm text-gray-600 hover:text-blue-600 font-medium hidden md:block">Events</a>
+
+                {% if session.get('user_id') %}
+                    <!-- User dropdown -->
+                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                        <button
+                            onclick="this.nextElementSibling.classList.toggle('hidden')"
+                            class="flex items-center gap-2 border border-gray-200 rounded-full px-3 py-1.5 hover:shadow-md transition-shadow text-sm">
+                            <i data-lucide="user" class="w-4 h-4 text-gray-600"></i>
+                            <span class="text-gray-700 font-medium max-w-24 truncate">{{ session.get('name') or session.get('email', 'Account') }}</span>
+                            <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400"></i>
+                        </button>
+                        <div class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50">
+                            <a href="/profile/" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                                <i data-lucide="user" class="w-4 h-4"></i> Profile
+                            </a>
+                            {% if session.get('role') == 'host' %}
+                            <a href="/profile/my-listings" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                                <i data-lucide="home" class="w-4 h-4"></i> My Listings
+                            </a>
+                            {% endif %}
+                            <a href="/bookings/my-bookings" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                                <i data-lucide="calendar" class="w-4 h-4"></i> My Bookings
+                            </a>
+                            <hr class="my-1 border-gray-100">
+                            <a href="/auth/logout" class="flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">
+                                <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="/auth/login" class="text-sm text-gray-600 hover:text-blue-600 font-medium">Log in</a>
+                    <a href="/auth/register" class="gradient-blue text-white text-sm font-medium px-4 py-2 rounded-full hover:opacity-90 transition-opacity">
+                        Sign up
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

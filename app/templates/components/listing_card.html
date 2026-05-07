@@ -1,0 +1,76 @@
+{% macro listing_card(listing, ltype) %}
+<div class="group relative bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+    <a href="/{{ ltype }}s/{{ listing.id }}" class="absolute inset-0 z-10" aria-label="{{ listing.title }}"></a>
+
+    <!-- Image -->
+    <div class="relative h-52 overflow-hidden bg-gradient-to-br from-blue-100 to-blue-200">
+        {% if listing.images and listing.images|length > 0 %}
+            <img src="{{ listing.images[0] }}" alt="{{ listing.title }}"
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        {% else %}
+            <div class="w-full h-full gradient-blue flex items-center justify-center">
+                {% if ltype == 'home' %}
+                    <i data-lucide="home" class="w-16 h-16 text-white opacity-50"></i>
+                {% elif ltype == 'experience' %}
+                    <i data-lucide="compass" class="w-16 h-16 text-white opacity-50"></i>
+                {% else %}
+                    <i data-lucide="music" class="w-16 h-16 text-white opacity-50"></i>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <!-- Category badge -->
+        <div class="absolute top-3 left-3">
+            <span class="bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-full capitalize">
+                {{ listing.category or listing.eventType or ltype }}
+            </span>
+        </div>
+
+        <!-- Rating badge -->
+        {% if listing.ratings and listing.ratings.count > 0 %}
+        <div class="absolute top-3 right-3">
+            <span class="bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
+                <i data-lucide="star" class="w-3 h-3 text-yellow-500 fill-yellow-500"></i>
+                {{ "%.1f"|format(listing.ratings.average) }}
+            </span>
+        </div>
+        {% endif %}
+
+        <!-- AI badge -->
+        {% if listing.aiConfig and listing.aiConfig.enabled %}
+        <div class="absolute bottom-3 right-3 z-20">
+            <span class="gradient-blue text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                <i data-lucide="zap" class="w-3 h-3"></i> AI
+            </span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Content -->
+    <div class="p-4">
+        <h3 class="font-semibold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
+            {{ listing.title }}
+        </h3>
+        {% if listing.location %}
+        <p class="text-gray-500 text-sm mt-0.5 flex items-center gap-1">
+            <i data-lucide="map-pin" class="w-3 h-3 flex-shrink-0"></i>
+            <span class="line-clamp-1">{{ listing.location.city }}{% if listing.location.country %}, {{ listing.location.country }}{% endif %}</span>
+        </p>
+        {% endif %}
+        <p class="text-gray-400 text-sm mt-1.5 line-clamp-2">{{ listing.description }}</p>
+
+        <div class="flex items-center justify-between mt-3">
+            <div>
+                {% set price = listing.price or listing.ticketPrice or 0 %}
+                <span class="font-bold text-gray-900 text-lg">${{ "%.0f"|format(price) }}</span>
+                <span class="text-gray-400 text-sm">
+                    {% if ltype == 'home' %}/night{% elif ltype == 'experience' %}/person{% else %}/ticket{% endif %}
+                </span>
+            </div>
+            <span class="gradient-blue text-white text-xs font-semibold px-3 py-1.5 rounded-full relative z-20 pointer-events-none">
+                Book on Air
+            </span>
+        </div>
+    </div>
+</div>
+{% endmacro %}

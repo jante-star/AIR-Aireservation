@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  air:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file: .env
+    volumes:
+      - ./firebase-key.json:/app/firebase-key.json:ro
+    restart: unless-stopped

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}Profile — Air{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Profile header -->
+    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-8 mb-8">
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+            <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                {% if user and user.profile_image %}
+                    <img src="{{ user.profile_image }}" alt="{{ user.name }}" class="w-full h-full object-cover">
+                {% else %}
+                    <span class="text-white text-3xl font-bold">
+                        {{ (user.name or user.email or 'U')[0]|upper }}
+                    </span>
+                {% endif %}
+            </div>
+            <div class="text-center sm:text-left flex-1">
+                <h1 class="text-2xl font-bold text-gray-900">{{ user.name or 'Air User' }}</h1>
+                <p class="text-gray-500 mt-0.5">{{ user.email }}</p>
+                {% if user.bio %}
+                <p class="text-gray-600 mt-2 text-sm">{{ user.bio }}</p>
+                {% endif %}
+                <div class="flex flex-wrap items-center gap-3 mt-3">
+                    <span class="{% if user.role == 'host' %}gradient-blue text-white{% else %}bg-gray-100 text-gray-600{% endif %} text-xs font-semibold px-3 py-1 rounded-full capitalize">
+                        {{ user.role or 'guest' }}
+                    </span>
+                    {% if user.phone %}
+                    <span class="text-gray-400 text-sm flex items-center gap-1">
+                        <i data-lucide="phone" class="w-3.5 h-3.5"></i> {{ user.phone }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            <a href="/profile/edit"
+               class="flex items-center gap-2 border border-gray-300 text-gray-700 font-medium px-4 py-2 rounded-xl text-sm hover:bg-gray-50 transition-colors">
+                <i data-lucide="edit-2" class="w-4 h-4"></i> Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 text-center shadow-sm">
+            <div class="text-2xl font-bold gradient-text">{{ bookings|length }}</div>
+            <div class="text-gray-500 text-sm mt-1">Bookings</div>
+        </div>
+        {% if user.role == 'host' %}
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 text-center shadow-sm">
+            <div class="text-2xl font-bold gradient-text">{{ listings|length }}</div>
+            <div class="text-gray-500 text-sm mt-1">Listings</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- My Listings (host) -->
+    {% if user.role == 'host' and listings %}
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-5">
+            <h2 class="text-xl font-bold text-gray-900">My Listings</h2>
+            <a href="/homes/create" class="gradient-blue text-white text-sm font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition-opacity">
+                + New Listing
+            </a>
+        </div>
+        {% from 'components/listing_card.html' import listing_card %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {% for listing in listings %}
+                {{ listing_card(listing, 'home') }}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- My Bookings -->
+    {% if bookings %}
+    <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-5">My Bookings</h2>
+        <div class="space-y-3">
+            {% for booking in bookings %}
+            <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div class="flex-1">
+                    <div class="font-semibold text-gray-900">Booking #{{ booking.id[:8] }}...</div>
+                    <div class="text-gray-500 text-sm mt-0.5">
+                        {{ booking.listingType|capitalize }} •
+                        {% if booking.checkIn %}{{ booking.checkIn }}{% if booking.checkOut %} → {{ booking.checkOut }}{% endif %}{% endif %}
+                    </div>
+                    <div class="text-gray-400 text-sm">{{ booking.guests }} guest{{ 's' if booking.guests != 1 else '' }}</div>
+                </div>
+                <div class="text-right">
+                    <div class="font-bold text-gray-900">${{ "%.2f"|format(booking.totalPrice) }}</div>
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full
+                        {% if booking.status == 'confirmed' %}bg-green-100 text-green-700
+                        {% elif booking.status == 'pending' %}bg-yellow-100 text-yellow-700
+                        {% else %}bg-gray-100 text-gray-600{% endif %}">
+                        {{ booking.status|capitalize }}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
