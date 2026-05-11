@@ -43,3 +43,8 @@ def edit_profile():
 def my_listings():
     listings = Home.get_by_host(session['user_id'])
     return render_template('pages/my_listings.html', listings=listings)
+
+@profile_bp.route('/settings')
+@login_required
+def settings():
+    return render_template('pages/settings.html')

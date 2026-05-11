@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}Settings — Air{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Settings</h1>
+        <p class="text-gray-500 mt-1">Manage your Air preferences</p>
+    </div>
+
+    <!-- Appearance -->
+    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 mb-6">
+        <div class="flex items-center gap-3 mb-5">
+            <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
+                <i data-lucide="palette" class="w-5 h-5 text-blue-600"></i>
+            </div>
+            <div>
+                <h2 class="font-bold text-gray-900">Appearance</h2>
+                <p class="text-gray-500 text-sm">Choose how Air looks on your device</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3" id="theme-options">
+
+            <!-- Light -->
+            <button data-theme-choice="light"
+                    class="theme-option flex flex-col items-center gap-2 p-4 border-2 rounded-xl transition-all cursor-pointer">
+                <div class="w-full h-16 rounded-lg bg-white border border-gray-200 flex flex-col gap-1 p-2 overflow-hidden">
+                    <div class="h-2 w-3/4 bg-gray-200 rounded"></div>
+                    <div class="h-1.5 w-1/2 bg-gray-100 rounded"></div>
+                    <div class="mt-auto h-2 w-full bg-blue-400 rounded"></div>
+                </div>
+                <span class="text-sm font-semibold text-gray-700">Light</span>
+            </button>
+
+            <!-- Dark -->
+            <button data-theme-choice="dark"
+                    class="theme-option flex flex-col items-center gap-2 p-4 border-2 rounded-xl transition-all cursor-pointer">
+                <div class="w-full h-16 rounded-lg bg-gray-900 border border-gray-700 flex flex-col gap-1 p-2 overflow-hidden">
+                    <div class="h-2 w-3/4 bg-gray-600 rounded"></div>
+                    <div class="h-1.5 w-1/2 bg-gray-700 rounded"></div>
+                    <div class="mt-auto h-2 w-full bg-blue-500 rounded"></div>
+                </div>
+                <span class="text-sm font-semibold text-gray-700">Dark</span>
+            </button>
+
+            <!-- System -->
+            <button data-theme-choice="system"
+                    class="theme-option flex flex-col items-center gap-2 p-4 border-2 rounded-xl transition-all cursor-pointer">
+                <div class="w-full h-16 rounded-lg overflow-hidden border border-gray-200 flex">
+                    <div class="w-1/2 bg-white flex flex-col gap-1 p-2">
+                        <div class="h-2 w-3/4 bg-gray-200 rounded"></div>
+                        <div class="h-1.5 w-1/2 bg-gray-100 rounded"></div>
+                    </div>
+                    <div class="w-1/2 bg-gray-900 flex flex-col gap-1 p-2">
+                        <div class="h-2 w-3/4 bg-gray-600 rounded"></div>
+                        <div class="h-1.5 w-1/2 bg-gray-700 rounded"></div>
+                    </div>
+                </div>
+                <span class="text-sm font-semibold text-gray-700">System</span>
+            </button>
+
+        </div>
+
+        <p class="text-gray-400 text-xs mt-4">
+            <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
+            System follows your device's light/dark preference automatically.
+        </p>
+    </div>
+
+    <!-- Account shortcuts -->
+    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm divide-y divide-gray-100">
+        <a href="/profile/edit" class="flex items-center gap-3 px-6 py-4 hover:bg-gray-50 transition-colors">
+            <i data-lucide="user-pen" class="w-5 h-5 text-gray-400"></i>
+            <div>
+                <div class="font-medium text-gray-900 text-sm">Edit Profile</div>
+                <div class="text-gray-500 text-xs">Name, photo, bio, and phone</div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 ml-auto"></i>
+        </a>
+        <a href="/bookings/my-bookings" class="flex items-center gap-3 px-6 py-4 hover:bg-gray-50 transition-colors">
+            <i data-lucide="calendar" class="w-5 h-5 text-gray-400"></i>
+            <div>
+                <div class="font-medium text-gray-900 text-sm">My Bookings</div>
+                <div class="text-gray-500 text-xs">View and manage your bookings</div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 ml-auto"></i>
+        </a>
+        {% if session.get('role') == 'host' %}
+        <a href="/profile/my-listings" class="flex items-center gap-3 px-6 py-4 hover:bg-gray-50 transition-colors">
+            <i data-lucide="home" class="w-5 h-5 text-gray-400"></i>
+            <div>
+                <div class="font-medium text-gray-900 text-sm">My Listings</div>
+                <div class="text-gray-500 text-xs">Manage your hosted properties</div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 ml-auto"></i>
+        </a>
+        {% endif %}
+        <a href="/auth/logout" class="flex items-center gap-3 px-6 py-4 hover:bg-red-50 transition-colors">
+            <i data-lucide="log-out" class="w-5 h-5 text-red-400"></i>
+            <div class="font-medium text-red-600 text-sm">Sign Out</div>
+        </a>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var current = localStorage.getItem('air-theme') || 'system';
+    var options = document.querySelectorAll('.theme-option');
+
+    function highlight(choice) {
+        options.forEach(function (btn) {
+            var active = btn.dataset.themeChoice === choice;
+            btn.classList.toggle('border-blue-500', active);
+            btn.classList.toggle('bg-blue-50', active);
+            btn.classList.toggle('border-gray-200', !active);
+        });
+    }
+
+    highlight(current);
+
+    options.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var choice = btn.dataset.themeChoice;
+            localStorage.setItem('air-theme', choice);
+            window.AirTheme && window.AirTheme.apply(choice);
+            highlight(choice);
+        });
+    });
+})();
+</script>
+{% endblock %}

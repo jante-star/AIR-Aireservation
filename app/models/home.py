@@ -89,3 +89,41 @@ class Home:
         from app.firebase_config import db
         if not db: return
         db.collection(Home.COLLECTION).document(home_id).delete()
+
+    @staticmethod
+    def create_from_place(host_id, place_data):
+        """Create a home listing from a Google Places API result."""
+        from app.firebase_config import db
+        if not db: return None
+        ref = db.collection(Home.COLLECTION).document()
+        location = place_data.get('location', {})
+        ref.set({
+            'id': ref.id,
+            'hostId': host_id,
+            'source': 'google_places',
+            'placeId': place_data.get('place_id', ''),
+            'title': place_data.get('name', 'Unnamed Place'),
+            'description': place_data.get('editorial_summary', place_data.get('formatted_address', '')),
+            'category': 'hotel',
+            'price': place_data.get('price_per_night', 0),
+            'bedrooms': place_data.get('bedrooms', 1),
+            'bathrooms': place_data.get('bathrooms', 1),
+            'location': {
+                'address': place_data.get('formatted_address', ''),
+                'city': location.get('city', ''),
+                'country': location.get('country', ''),
+                'latitude': location.get('lat', 0),
+                'longitude': location.get('lng', 0),
+            },
+            'amenities': place_data.get('amenities', []),
+            'images': place_data.get('photos', []),
+            'aiConfig': {'enabled': False, 'agentId': ''},
+            'ratings': {
+                'average': place_data.get('rating', 0),
+                'count': place_data.get('user_ratings_total', 0),
+            },
+            'status': 'published',
+            'created_at': fs.SERVER_TIMESTAMP,
+            'updated_at': fs.SERVER_TIMESTAMP,
+        })
+        return ref.id
