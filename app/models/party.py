@@ -8,7 +8,7 @@ class Party:
         from app.firebase_config import db
         if not db: return None
         ref = db.collection(Party.COLLECTION).document()
-        ref.set({
+        doc = {
             'id': ref.id,
             'hostId': host_id,
             'title': data.get('title'),
@@ -26,14 +26,14 @@ class Party:
                 'longitude': float(data.get('longitude', 0)),
             },
             'images': data.get('images', []),
-            'aiConfig': {
-                'enabled': data.get('ai_enabled', False),
-                'agentId': data.get('ai_agent_id', ''),
-            },
+            'aiConfig': {'enabled': False, 'agentId': ''},
             'status': 'draft',
             'created_at': fs.SERVER_TIMESTAMP,
             'updated_at': fs.SERVER_TIMESTAMP,
-        })
+        }
+        ref.set(doc)
+        from app.services.listing_sync import sync_listing
+        sync_listing('party', ref.id, 'create', doc)
         return ref.id
 
     @staticmethod
@@ -49,3 +49,26 @@ class Party:
         if not db: return []
         docs = db.collection(Party.COLLECTION).where('status', '==', 'published').stream()
         return [doc.to_dict() for doc in docs]
+
+    @staticmethod
+    def update(party_id, data):
+        from app.firebase_config import db
+        if not db: return
+        db.collection(Party.COLLECTION).document(party_id).update({
+            **data,
+            'updated_at': fs.SERVER_TIMESTAMP,
+        })
+        fresh = Party.get_by_id(party_id)
+        if fresh:
+            from app.services.listing_sync import sync_listing
+            sync_listing('party', party_id, 'update', fresh)
+
+    @staticmethod
+    def delete(party_id):
+        from app.firebase_config import db
+        if not db: return
+        doc = Party.get_by_id(party_id)
+        db.collection(Party.COLLECTION).document(party_id).delete()
+        if doc:
+            from app.services.listing_sync import sync_listing
+            sync_listing('party', party_id, 'delete', doc)

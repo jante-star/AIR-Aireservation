@@ -8,7 +8,7 @@ class Home:
         from app.firebase_config import db
         if not db: return None
         ref = db.collection(Home.COLLECTION).document()
-        ref.set({
+        doc = {
             'id': ref.id,
             'hostId': host_id,
             'title': data.get('title'),
@@ -26,15 +26,16 @@ class Home:
             },
             'amenities': data.get('amenities', []),
             'images': data.get('images', []),
-            'aiConfig': {
-                'enabled': data.get('ai_enabled', False),
-                'agentId': data.get('ai_agent_id', ''),
-            },
+            'aiConfig': {'enabled': False, 'agentId': ''},
             'ratings': {'average': 0, 'count': 0},
             'status': 'draft',
             'created_at': fs.SERVER_TIMESTAMP,
             'updated_at': fs.SERVER_TIMESTAMP,
-        })
+        }
+        ref.set(doc)
+        # Sync to Retell KB when published; drafts sync on publish
+        from app.services.listing_sync import sync_listing
+        sync_listing('home', ref.id, 'create', doc)
         return ref.id
 
     @staticmethod
@@ -83,12 +84,21 @@ class Home:
             **data,
             'updated_at': fs.SERVER_TIMESTAMP,
         })
+        # Re-sync the full document to Retell KB
+        fresh = Home.get_by_id(home_id)
+        if fresh:
+            from app.services.listing_sync import sync_listing
+            sync_listing('home', home_id, 'update', fresh)
 
     @staticmethod
     def delete(home_id):
         from app.firebase_config import db
         if not db: return
+        doc = Home.get_by_id(home_id)
         db.collection(Home.COLLECTION).document(home_id).delete()
+        if doc:
+            from app.services.listing_sync import sync_listing
+            sync_listing('home', home_id, 'delete', doc)
 
     @staticmethod
     def create_from_place(host_id, place_data):
@@ -97,7 +107,7 @@ class Home:
         if not db: return None
         ref = db.collection(Home.COLLECTION).document()
         location = place_data.get('location', {})
-        ref.set({
+        doc = {
             'id': ref.id,
             'hostId': host_id,
             'source': 'google_places',
@@ -125,5 +135,8 @@ class Home:
             'status': 'published',
             'created_at': fs.SERVER_TIMESTAMP,
             'updated_at': fs.SERVER_TIMESTAMP,
-        })
+        }
+        ref.set(doc)
+        from app.services.listing_sync import sync_listing
+        sync_listing('home', ref.id, 'create', doc)
         return ref.id

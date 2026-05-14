@@ -1,7 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, session
 from app.models.home import Home
 from app.services.storage_service import StorageService
-from app.services.ai_service import RetellAIService
 from app.services.places_service import PlacesService
 from app.utils.decorators import login_required, host_required
 
@@ -22,13 +21,6 @@ def view_home(home_id):
     home = Home.get_by_id(home_id)
     if not home:
         return render_template('errors/404.html'), 404
-    # Auto-provision a Retell AI agent for this listing if one doesn't exist yet
-    agent_id = RetellAIService.get_or_create_agent(home_id, 'home', home)
-    if agent_id:
-        if not home.get('aiConfig'):
-            home['aiConfig'] = {}
-        home['aiConfig']['enabled'] = True
-        home['aiConfig']['agentId'] = agent_id
     return render_template('pages/listing_detail.html', listing=home, listing_type='home')
 
 @homes_bp.route('/import-from-places', methods=['GET'])

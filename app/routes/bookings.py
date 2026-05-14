@@ -43,10 +43,9 @@ def my_bookings():
 @login_required
 def start_ai_call():
     from app.services.ai_service import RetellAIService
-    data = request.get_json()
-    agent_id = data.get('agent_id')
-    listing_id = data.get('listing_id')
-    token = RetellAIService.create_call_token(agent_id, session['user_id'], listing_id)
+    data = request.get_json() or {}
+    listing_id = data.get('listing_id', '')
+    token = RetellAIService.create_call_token(session['user_id'], listing_id)
     if token:
         return jsonify({'access_token': token})
     return jsonify({'error': 'Could not start call'}), 500
