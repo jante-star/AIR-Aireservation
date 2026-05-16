@@ -7,6 +7,17 @@ class Config:
     SESSION_COOKIE_SAMESITE = 'Lax'
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
+    # Firebase
+    FIREBASE_KEY_PATH = os.getenv('FIREBASE_KEY_PATH', './firebase-key.json')
+    FIREBASE_STORAGE_BUCKET = os.getenv('FIREBASE_STORAGE_BUCKET', '')
+
+    # Retell AI
+    RETELL_API_KEY = os.getenv('RETELL_API_KEY', '')
+    RETELL_API_BASE_URL = os.getenv('RETELL_API_BASE_URL', 'https://api.retellai.com')
+
+    # Google Places
+    GOOGLE_PLACES_API_KEY = os.getenv('GOOGLE_PLACES_API_KEY', '')
+
 class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = False

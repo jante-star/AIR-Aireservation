@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}Import from Google Places — Air{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 rounded-xl gradient-blue flex items-center justify-center">
+                <i data-lucide="map-pin" class="w-5 h-5 text-white"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900">Import from Google Places</h1>
+        </div>
+        <p class="text-gray-500 mt-1">Search hotels and accommodations from Google Places and add them to Air.</p>
+    </div>
+
+    <!-- Search form -->
+    <form method="GET" action="/homes/import-from-places" class="flex flex-wrap gap-3 mb-8 p-5 bg-gray-50 rounded-2xl border border-gray-100">
+        <input type="text" name="q" value="{{ query }}"
+               placeholder="hotels, resorts, villas..."
+               class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 flex-1 min-w-48">
+        <input type="text" name="location" value="{{ location }}"
+               placeholder="City or country..."
+               class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 flex-1 min-w-48">
+        <button type="submit" class="gradient-blue text-white font-semibold px-6 py-2.5 rounded-xl text-sm hover:opacity-90 transition-opacity flex items-center gap-2">
+            <i data-lucide="search" class="w-4 h-4"></i> Search
+        </button>
+    </form>
+
+    {% if not results and not request.args.get('q') %}
+    <div class="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
+        <i data-lucide="map" class="w-12 h-12 text-gray-300 mx-auto mb-4"></i>
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">Search for accommodations</h2>
+        <p class="text-gray-400">Enter a location or type above to find hotels and homes from Google Places.</p>
+    </div>
+
+    {% elif not results %}
+    <div class="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
+        <i data-lucide="search-x" class="w-12 h-12 text-gray-300 mx-auto mb-4"></i>
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">No results found</h2>
+        <p class="text-gray-400 mb-4">Try a different search term or location.</p>
+        {% if not config.GOOGLE_PLACES_API_KEY %}
+        <p class="text-amber-600 text-sm bg-amber-50 border border-amber-200 rounded-xl px-5 py-3 inline-block">
+            <i data-lucide="alert-triangle" class="w-4 h-4 inline mr-1"></i>
+            Google Places API key is not configured. Add <code class="font-mono">GOOGLE_PLACES_API_KEY</code> to your <code class="font-mono">.env</code> file.
+        </p>
+        {% endif %}
+    </div>
+
+    {% else %}
+    <p class="text-gray-500 text-sm mb-5">{{ results|length }} result{{ 's' if results|length != 1 else '' }} found</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for place in results %}
+        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+
+            <!-- Photo -->
+            <div class="h-44 bg-gradient-to-br from-blue-100 to-blue-200 relative">
+                {% if place.photo_ref %}
+                <img src="/homes/places-photo/{{ place.photo_ref }}"
+                     alt="{{ place.name }}"
+                     class="w-full h-full object-cover">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center">
+                    <i data-lucide="building-2" class="w-12 h-12 text-blue-300"></i>
+                </div>
+                {% endif %}
+                <!-- Google Places badge -->
+                <span class="absolute top-3 left-3 bg-white/90 text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
+                    <i data-lucide="map-pin" class="w-3 h-3 text-blue-500"></i> Google Places
+                </span>
+            </div>
+
+            <div class="p-4">
+                <h3 class="font-bold text-gray-900 line-clamp-1 mb-1">{{ place.name }}</h3>
+                <p class="text-gray-500 text-sm line-clamp-2 mb-3">{{ place.formatted_address }}</p>
+
+                <div class="flex items-center justify-between mb-4">
+                    {% if place.rating %}
+                    <div class="flex items-center gap-1">
+                        <i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500 fill-yellow-500"></i>
+                        <span class="text-sm font-semibold text-yellow-700">{{ "%.1f"|format(place.rating) }}</span>
+                        {% if place.user_ratings_total %}
+                        <span class="text-gray-400 text-xs">({{ place.user_ratings_total }})</span>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <span class="text-gray-400 text-xs">No rating</span>
+                    {% endif %}
+
+                    {% if place.price_level is not none %}
+                    <span class="text-gray-500 text-sm font-medium">
+                        {% for i in range(place.price_level or 1) %}${% endfor %}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <form method="POST" action="/homes/import-from-places/{{ place.place_id }}">
+                    <button type="submit"
+                            class="w-full gradient-blue text-white font-semibold py-2 rounded-xl text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        Add to Air
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

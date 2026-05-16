@@ -14,6 +14,7 @@ def create_app(config_class=Config):
     from app.routes.bookings import bookings_bp
     from app.routes.profile import profile_bp
     from app.routes.search import search_bp
+    from app.routes.retell_webhook import retell_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(homes_bp)
@@ -22,6 +23,7 @@ def create_app(config_class=Config):
     app.register_blueprint(bookings_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(search_bp)
+    app.register_blueprint(retell_bp)
 
     @app.route('/')
     def index():

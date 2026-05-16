@@ -33,9 +33,15 @@
                 <a href="/experiences" class="text-sm text-gray-600 hover:text-blue-600 font-medium hidden md:block">Experiences</a>
                 <a href="/parties" class="text-sm text-gray-600 hover:text-blue-600 font-medium hidden md:block">Events</a>
 
+                <!-- Theme toggle -->
+                <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle theme" aria-label="Toggle theme">
+                    <i data-lucide="sun" class="w-4 h-4 dark-hide"></i>
+                    <i data-lucide="moon" class="w-4 h-4 light-hide hidden"></i>
+                </button>
+
                 {% if session.get('user_id') %}
                     <!-- User dropdown -->
-                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                    <div class="relative">
                         <button
                             onclick="this.nextElementSibling.classList.toggle('hidden')"
                             class="flex items-center gap-2 border border-gray-200 rounded-full px-3 py-1.5 hover:shadow-md transition-shadow text-sm">
@@ -43,7 +49,7 @@
                             <span class="text-gray-700 font-medium max-w-24 truncate">{{ session.get('name') or session.get('email', 'Account') }}</span>
                             <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400"></i>
                         </button>
-                        <div class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50">
+                        <div class="hidden absolute right-0 mt-2 w-52 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50">
                             <a href="/profile/" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
                                 <i data-lucide="user" class="w-4 h-4"></i> Profile
                             </a>
@@ -54,6 +60,9 @@
                             {% endif %}
                             <a href="/bookings/my-bookings" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
                                 <i data-lucide="calendar" class="w-4 h-4"></i> My Bookings
+                            </a>
+                            <a href="/profile/settings" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                                <i data-lucide="settings" class="w-4 h-4"></i> Settings
                             </a>
                             <hr class="my-1 border-gray-100">
                             <a href="/auth/logout" class="flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">
