@@ -1,4 +1,4 @@
-app = "air-aireservation"
+app = "air-aireservations-jante"
 primary_region = "mia"
 
 [build]
