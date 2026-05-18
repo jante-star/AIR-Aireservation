@@ -1,5 +1,5 @@
 app = "air-aireservations-jante"
-primary_region = "mia"
+primary_region = "iad"
 
 [build]
 
