@@ -1,58 +1,66 @@
 {% extends 'base.html' %}
-{% block title %}Log In — Air{% endblock %}
+{% block title %}Log In — Spot{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-blue-50 flex items-center justify-center py-12 px-4">
-    <div class="w-full max-w-md">
+<div class="min-h-screen flex items-center justify-center py-12 px-4" style="background: var(--bg-secondary);">
+    <div class="w-full max-w-sm">
 
         <!-- Logo -->
         <div class="text-center mb-8">
             <a href="/" class="inline-flex flex-col items-center gap-2">
-                <div class="w-14 h-14 rounded-2xl gradient-blue flex items-center justify-center shadow-lg">
-                    <span class="text-white font-bold text-2xl">A</span>
+                <div class="w-14 h-14 rounded-2xl gradient-yellow flex items-center justify-center shadow-lg">
+                    <span class="text-black font-bold text-2xl">S</span>
                 </div>
-                <div>
-                    <div class="font-bold text-2xl gradient-text">Air</div>
-                    <div class="text-gray-400 text-sm">AI Reservations</div>
-                </div>
+                <div class="font-bold text-2xl gradient-yellow-text">Spot</div>
             </a>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <h1 class="text-2xl font-bold text-gray-900 mb-1">Welcome back</h1>
-            <p class="text-gray-500 text-sm mb-6">Sign in to your Air account</p>
+        <div class="rounded-2xl p-8 shadow-lg" style="background: var(--card-bg); border: 1px solid var(--border);">
+            <h1 class="text-2xl font-bold mb-1" style="color: var(--text);">Welcome back</h1>
+            <p class="text-sm mb-6" style="color: var(--text-muted);">Sign in to your Spot account</p>
 
             {% if error %}
-            <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 mb-5 text-sm flex items-center gap-2">
+            <div class="rounded-xl px-4 py-3 mb-5 text-sm flex items-center gap-2" style="background: #FEE2E2; border: 1px solid #FECACA; color: #DC2626;">
                 <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
                 {{ error }}
             </div>
             {% endif %}
 
             <form method="POST" action="/auth/login" class="space-y-4">
+                <input type="hidden" name="next" value="{{ next or '' }}">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-                    <input type="email" name="email" required
-                           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                    <label class="block text-sm font-semibold mb-1.5" style="color: var(--text);">Email</label>
+                    <input type="email" name="email" required value="{{ email or '' }}"
+                           class="w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                           style="border: 1.5px solid var(--border); background: var(--input-bg); color: var(--text); --tw-ring-color: #F59E0B;"
                            placeholder="you@example.com">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                    <label class="block text-sm font-semibold mb-1.5" style="color: var(--text);">Password</label>
                     <input type="password" name="password" required
-                           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                           class="w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                           style="border: 1.5px solid var(--border); background: var(--input-bg); color: var(--text); --tw-ring-color: #F59E0B;"
                            placeholder="••••••••">
                 </div>
                 <button type="submit"
-                        class="w-full gradient-blue text-white font-semibold py-2.5 rounded-xl hover:opacity-90 transition-opacity mt-2">
-                    Sign In
+                        class="w-full gradient-yellow text-black font-bold py-3 rounded-xl hover:opacity-90 transition-all text-sm mt-2 shadow-sm">
+                    Continue
                 </button>
             </form>
 
-            <p class="text-center text-gray-500 text-sm mt-6">
+            <div class="auth-divider mt-5">
+                <span>or</span>
+            </div>
+
+            <p class="text-center text-sm" style="color: var(--text-muted);">
                 Don't have an account?
-                <a href="/auth/register" class="text-blue-600 font-medium hover:underline">Sign up</a>
+                <a href="/auth/register{% if next %}?next={{ next }}{% endif %}" class="font-bold hover:underline" style="color: var(--primary);">Sign up</a>
             </p>
         </div>
+
+        <p class="text-center text-xs mt-6" style="color: var(--text-muted);">
+            By continuing you agree to Spot's <a href="#" class="underline">Terms</a> and <a href="#" class="underline">Privacy Policy</a>.
+        </p>
     </div>
 </div>
 {% endblock %}

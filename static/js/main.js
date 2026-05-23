@@ -41,14 +41,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Expose so the settings page can call it
     window.AirTheme = { apply: applyTheme };
+    window.SpotTheme = { apply: applyTheme };
 
-    // Apply on load
-    const saved = localStorage.getItem('air-theme') || 'system';
+    // Apply on load — check both old and new key for migration
+    const saved = localStorage.getItem('spot-theme') || localStorage.getItem('air-theme') || 'system';
     applyTheme(saved);
 
     // Re-apply when system preference changes (for 'system' mode)
     mq.addEventListener('change', () => {
-        const current = localStorage.getItem('air-theme') || 'system';
+        const current = localStorage.getItem('spot-theme') || localStorage.getItem('air-theme') || 'system';
         if (current === 'system') applyTheme('system');
     });
 
@@ -56,9 +57,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const toggleBtn = document.getElementById('theme-toggle-btn');
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
-            const current = localStorage.getItem('air-theme') || 'system';
+            const current = localStorage.getItem('spot-theme') || 'system';
             const next = current === 'light' ? 'dark' : current === 'dark' ? 'system' : 'light';
-            localStorage.setItem('air-theme', next);
+            localStorage.setItem('spot-theme', next);
             applyTheme(next);
         });
     }

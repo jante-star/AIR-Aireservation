@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Air — AI Reservations{% endblock %}</title>
+    <title>{% block title %}Spot — AI Reservations{% endblock %}</title>
     <!-- Apply theme before page paint to avoid flash -->
     <script>
         (function () {
-            var saved = localStorage.getItem('air-theme') || 'system';
+            var saved = localStorage.getItem('spot-theme') || 'system';
             var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             var dark = saved === 'dark' || (saved === 'system' && prefersDark);
             if (dark) document.documentElement.setAttribute('data-theme', 'dark');
@@ -16,6 +16,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="/static/css/style.css">
+    {% if config.GOOGLE_MAPS_API_KEY %}
+    <script>
+        window._mapsApiKey = {{ config.GOOGLE_MAPS_API_KEY | tojson }};
+    </script>
+    {% endif %}
     {% block extra_head %}{% endblock %}
 </head>
 <body class="min-h-screen flex flex-col">
