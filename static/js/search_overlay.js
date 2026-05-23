@@ -31,7 +31,11 @@
     function open(cat) {
         currentCat = cat || 'homes';
         window.SpotOverlay.currentCat = currentCat;
-        overlay.classList.add('is-open');
+        overlay.style.display = 'flex';
+        // Allow display to apply before adding transition class
+        requestAnimationFrame(function () {
+            overlay.classList.add('is-open');
+        });
         backdrop.style.display = 'block';
         if (categoryTabs) categoryTabs.classList.add('overlay-active');
         document.body.style.overflow = 'hidden';
@@ -45,6 +49,12 @@
         if (categoryTabs) categoryTabs.classList.remove('overlay-active');
         document.body.style.overflow = '';
         cancelFlightAnim();
+        // Hide after transition completes
+        setTimeout(function () {
+            if (!overlay.classList.contains('is-open')) {
+                overlay.style.display = 'none';
+            }
+        }, 460);
     }
 
     // ESC key closes
