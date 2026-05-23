@@ -1,138 +1,286 @@
 {% extends 'base.html' %}
-{% block title %}Air — Book With AI{% endblock %}
+{% block title %}Spot — Explore{% endblock %}
+
+{% block extra_head %}
+<style>
+.hero-search-wrap { padding: 32px 16px 0; display:flex; flex-direction:column; align-items:center; }
+.hero-tagline { font-size:15px; font-weight:600; color:var(--text-muted); margin-bottom:14px; letter-spacing:0.02em; }
+</style>
+{% endblock %}
 
 {% block content %}
 
-<!-- Hero Section -->
-<section class="relative gradient-blue text-white overflow-hidden">
-    <div class="absolute inset-0 bg-black/20"></div>
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 text-center">
-        <h1 class="text-4xl md:text-6xl font-bold mb-3 leading-tight">
-            Book With Air
-        </h1>
-        <p class="text-xl md:text-2xl text-blue-100 mb-10 font-light">
-            AI Reservations — homes, experiences & events, powered by AI
-        </p>
+<!-- Search bar -->
+<div class="hero-search-wrap fade-in-up">
+    <p class="hero-tagline">Find your perfect stay, experience, or adventure</p>
+    <button class="search-pill" id="search-trigger" onclick="window.SpotOverlay && window.SpotOverlay.open('homes')">
+        <div class="search-pill-section">
+            <span class="search-pill-label">Where</span>
+            <span class="search-pill-value">Search destinations</span>
+        </div>
+        <div class="search-pill-section">
+            <span class="search-pill-label">When</span>
+            <span class="search-pill-value">Add dates</span>
+        </div>
+        <div class="search-pill-section">
+            <span class="search-pill-label">Who</span>
+            <span class="search-pill-value">Add guests</span>
+        </div>
+        <div class="search-pill-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="#0A0A0A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+    </button>
+</div>
 
-        <!-- Search form -->
-        <div class="bg-white rounded-2xl shadow-2xl p-4 md:p-5 max-w-3xl mx-auto">
-            <form action="/search" method="GET">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <div class="md:col-span-1">
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 text-left">Location</label>
-                        <input type="text" name="q"
-                               class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                               placeholder="Where to?">
+<!-- Category tabs -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 fade-in-up-delay-1">
+    <div id="category-tabs" class="category-tabs-bar flex overflow-x-auto border-b mt-6" style="border-color:var(--border); scrollbar-width:none;">
+        <a href="/homes" class="cat-tab active" data-cat="homes">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Homes
+        </a>
+        <a href="/experiences" class="cat-tab" data-cat="experiences">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            Experiences
+        </a>
+        <a href="/services" class="cat-tab" data-cat="services">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+            Services
+        </a>
+        <a href="/flights" class="cat-tab" data-cat="flights">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21 4 19 2c-2-2-4-2-5.5-.5L10 5 1.8 6.2l3.3 3.3-1.1 4.4 4.4-1.1 3.3 3.3z"/></svg>
+            Flights
+        </a>
+        <a href="/cars" class="cat-tab" data-cat="cars">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            Cars
+        </a>
+    </div>
+</div>
+
+<!-- Search overlay -->
+<div id="search-overlay" class="search-overlay">
+    <div class="search-overlay-header">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex items-center gap-3 mb-5 overflow-x-auto pb-1" style="scrollbar-width:none;">
+                <button class="overlay-cat-pill active" data-ocat="homes" onclick="window.SpotOverlay.switchCat('homes')">🏠 Homes</button>
+                <button class="overlay-cat-pill" data-ocat="experiences" onclick="window.SpotOverlay.switchCat('experiences')">🎯 Experiences</button>
+                <button class="overlay-cat-pill" data-ocat="services" onclick="window.SpotOverlay.switchCat('services')">🛎 Services</button>
+                <button class="overlay-cat-pill" data-ocat="flights" onclick="window.SpotOverlay.switchCat('flights')">✈️ Flights</button>
+                <button class="overlay-cat-pill" data-ocat="cars" onclick="window.SpotOverlay.switchCat('cars')">🚗 Cars</button>
+                <button onclick="window.SpotOverlay.close()" class="ml-auto flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center border hover:bg-gray-100 transition-colors" style="border-color:var(--border); color:var(--text);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <!-- Homes / Experiences / Services fields -->
+            <div id="overlay-fields-homes" class="overlay-fields">
+                <div class="overlay-field"><label>Where</label><input type="text" id="where-homes" placeholder="Search destinations" autocomplete="off"></div>
+                <div class="overlay-field"><label>Check in</label><input type="date" id="checkin-homes"></div>
+                <div class="overlay-field"><label>Check out</label><input type="date" id="checkout-homes"></div>
+                <div class="overlay-field" style="border-right:none;"><label>Guests</label><input type="number" id="guests-homes" placeholder="Add guests" min="1" max="20"></div>
+                <button class="overlay-search-btn" onclick="window.SpotOverlay.search('homes')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Search
+                </button>
+            </div>
+            <!-- Flights fields -->
+            <div id="overlay-fields-flights" class="overlay-fields hidden">
+                <div class="overlay-field"><label>From</label><input type="text" id="from-flights" placeholder="City or airport" autocomplete="off"></div>
+                <div class="overlay-field"><label>To</label><input type="text" id="to-flights" placeholder="City or airport" autocomplete="off"></div>
+                <div class="overlay-field"><label>Departure</label><input type="date" id="depart-flights"></div>
+                <div class="overlay-field" style="border-right:none;"><label>Passengers</label><input type="number" id="pax-flights" placeholder="1" min="1" max="9"></div>
+                <button class="overlay-search-btn" onclick="window.SpotOverlay.searchFlights()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Search
+                </button>
+            </div>
+            <!-- Cars fields -->
+            <div id="overlay-fields-cars" class="overlay-fields hidden">
+                <div class="overlay-field"><label>Where</label><input type="text" id="where-cars" placeholder="Pick-up location" autocomplete="off"></div>
+                <div class="overlay-field"><label>Pick up</label><input type="date" id="pickup-cars"></div>
+                <div class="overlay-field" style="border-right:none;"><label>Drop off</label><input type="date" id="dropoff-cars"></div>
+                <button class="overlay-search-btn" onclick="window.SpotOverlay.search('cars')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Search
+                </button>
+            </div>
+            <!-- Generic fields -->
+            <div id="overlay-fields-generic" class="overlay-fields hidden">
+                <div class="overlay-field"><label>Where</label><input type="text" id="where-generic" placeholder="Search" autocomplete="off"></div>
+                <div class="overlay-field"><label>When</label><input type="date" id="when-generic"></div>
+                <div class="overlay-field" style="border-right:none;"><label>People</label><input type="number" id="people-generic" placeholder="Add guests" min="1"></div>
+                <button class="overlay-search-btn" onclick="window.SpotOverlay.search(window.SpotOverlay.currentCat)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Search
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Map -->
+    <div class="search-overlay-map">
+        <div id="spot-map">
+            <div class="map-placeholder" id="map-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.3;"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                <span>Interactive map appears here</span>
+            </div>
+        </div>
+        <svg id="flight-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;display:none;"></svg>
+        <div id="flight-plane" style="display:none;position:absolute;font-size:20px;pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));">✈️</div>
+    </div>
+</div>
+<div id="overlay-backdrop" onclick="window.SpotOverlay && window.SpotOverlay.close()"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199;"></div>
+
+<!-- Listing sections -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 fade-in-up-delay-2">
+
+    <!-- Recently viewed -->
+    <div id="recently-viewed-section" style="display:none;">
+        <h2 class="section-heading">Recently viewed</h2>
+        <div class="scroll-row" id="recently-viewed-row"></div>
+    </div>
+
+    <!-- Popular Homes -->
+    <div>
+        <h2 class="section-heading">Popular homes in Jamaica</h2>
+        <p class="section-subheading">Top-rated stays near you</p>
+        <div class="scroll-row">
+            {% from 'components/listing_card.html' import listing_card %}
+            {% if homes %}
+                {% for h in homes %}{{ listing_card(h, 'home') }}{% endfor %}
+            {% else %}
+                {% for item in [
+                    {'id':'ph1','title':'Sunset Villa Mandeville','description':'Stunning 4-bed villa with mountain views and private pool.','price':150,'category':'villa','location':{'city':'Mandeville','country':'Jamaica'},'ratings':{'average':4.9,'count':24},'images':[]},
+                    {'id':'ph2','title':'Kingston City Loft','description':'Modern 1-bed loft in the heart of New Kingston.','price':85,'category':'apartment','location':{'city':'Kingston','country':'Jamaica'},'ratings':{'average':4.7,'count':18},'images':[]},
+                    {'id':'ph3','title':'Treasure Beach Cottage','description':'Charming beachfront cottage steps from the sea.','price':120,'category':'cottage','location':{'city':'St. Elizabeth','country':'Jamaica'},'ratings':{'average':4.8,'count':31},'images':[]},
+                    {'id':'ph4','title':'Montego Bay Marina View','description':'Luxury 3-bed condo overlooking the marina.','price':200,'category':'apartment','location':{'city':'Montego Bay','country':'Jamaica'},'ratings':{'average':4.9,'count':12},'images':[]},
+                    {'id':'ph5','title':'Ocho Rios Garden House','description':'Tropical retreat surrounded by lush gardens.','price':165,'category':'house','location':{'city':'Ocho Rios','country':'Jamaica'},'ratings':{'average':4.6,'count':9},'images':[]}
+                ] %}{{ listing_card(item, 'home') }}{% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Experiences -->
+    <div>
+        <h2 class="section-heading">Popular experiences</h2>
+        <p class="section-subheading">Discover what locals love</p>
+        <div class="scroll-row">
+            {% if experiences %}
+                {% for e in experiences %}{{ listing_card(e, 'experience') }}{% endfor %}
+            {% else %}
+                {% for item in [
+                    {'id':'pe1','title':'Blue Mountains Coffee Tour','description':'Hike through lush plantations and taste freshly brewed Blue Mountain coffee.','price':45,'category':'culture','location':{'city':'Blue Mountains','country':'Jamaica'},'ratings':{'average':4.9,'count':67},'images':[]},
+                    {'id':'pe2','title':'Negril Sunset Catamaran','description':'Sail along 7-Mile Beach as the sun dips below the horizon.','price':75,'category':'adventure','location':{'city':'Negril','country':'Jamaica'},'ratings':{'average':4.8,'count':54},'images':[]},
+                    {'id':'pe3','title':'Kingston Food Walk','description':'Taste your way through Kingston\'s vibrant street food scene.','price':35,'category':'food','location':{'city':'Kingston','country':'Jamaica'},'ratings':{'average':4.7,'count':42},'images':[]},
+                    {'id':'pe4','title':'Dunn\'s River Falls Hike','description':'Climb one of Jamaica\'s most iconic natural wonders with a guide.','price':30,'category':'adventure','location':{'city':'Ocho Rios','country':'Jamaica'},'ratings':{'average':4.6,'count':89},'images':[]},
+                    {'id':'pe5','title':'Rastafarian Culture Tour','description':'An authentic dive into Jamaican culture, music, and heritage.','price':55,'category':'culture','location':{'city':'Kingston','country':'Jamaica'},'ratings':{'average':4.9,'count':33},'images':[]}
+                ] %}{{ listing_card(item, 'experience') }}{% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Cars -->
+    <div>
+        <h2 class="section-heading">Cars to rent</h2>
+        <p class="section-subheading">Explore at your own pace</p>
+        <div class="scroll-row">
+            {% for car in [
+                {'id':'c1','make':'Toyota','model':'Corolla','year':2022,'category':'economy','price':45,'location':{'city':'Kingston'},'seats':5,'features':['AC','Bluetooth','Automatic'],'ratings':{'average':4.8,'count':22}},
+                {'id':'c2','make':'Nissan','model':'X-Trail','year':2023,'category':'suv','price':75,'location':{'city':'Montego Bay'},'seats':7,'features':['AC','4WD','Sunroof'],'ratings':{'average':4.7,'count':15}},
+                {'id':'c3','make':'Toyota','model':'Hiace','year':2021,'category':'van','price':90,'location':{'city':'Kingston'},'seats':12,'features':['AC','Large luggage space'],'ratings':{'average':4.6,'count':11}},
+                {'id':'c4','make':'Honda','model':'Vezel','year':2023,'category':'suv','price':60,'location':{'city':'Ocho Rios'},'seats':5,'features':['AC','Backup cam','Bluetooth'],'ratings':{'average':4.9,'count':8}},
+                {'id':'c5','make':'Kia','model':'Seltos','year':2022,'category':'suv','price':65,'location':{'city':'Mandeville'},'seats':5,'features':['AC','Keyless entry'],'ratings':{'average':4.8,'count':19}}
+            ] %}
+            <a href="/cars/{{ car.id }}" class="car-card">
+                <div style="height:160px;background:linear-gradient(135deg,#F59E0B15,#F59E0B30);display:flex;align-items:center;justify-content:center;font-size:56px;">🚗</div>
+                <div style="padding:14px 16px 16px;">
+                    <div style="font-weight:700;font-size:15px;color:var(--text);">{{ car.year }} {{ car.make }} {{ car.model }}</div>
+                    <div style="font-size:13px;color:var(--text-muted);margin-top:2px;">{{ car.location.city }} · {{ car.category|capitalize }} · {{ car.seats }} seats</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">{{ car.features[:2]|join(' · ') }}</div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+                        <div style="font-weight:700;font-size:15px;color:var(--text);">${{ car.price }}<span style="font-weight:400;font-size:13px;color:var(--text-muted);">/day</span></div>
+                        <div class="rating-badge"><span class="star">★</span> {{ car.ratings.average }}</div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 text-left">Check In</label>
-                        <input type="date" name="check_in"
-                               class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 text-left">Check Out</label>
-                        <input type="date" name="check_out"
-                               class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 text-left">Guests</label>
-                        <div class="flex gap-2">
-                            <input type="number" name="guests" min="1" value="1"
-                                   class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                            <button type="submit"
-                                    class="gradient-blue text-white px-4 py-2 rounded-xl font-semibold hover:opacity-90 transition-opacity flex-shrink-0">
-                                <i data-lucide="search" class="w-4 h-4"></i>
-                            </button>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Services -->
+    <div>
+        <h2 class="section-heading">Services</h2>
+        <p class="section-subheading">Photography, catering, and more</p>
+        <div class="scroll-row">
+            {% for svc in [
+                {'id':'s1','title':'Jamaica Property Photography','category':'photography','price':150,'location':{'city':'Kingston'},'ratings':{'average':4.9,'count':16},'emoji':'📸'},
+                {'id':'s2','title':'Event & Wedding Photography','category':'photography','price':200,'location':{'city':'Montego Bay'},'ratings':{'average':5.0,'count':9},'emoji':'📷'},
+                {'id':'s3','title':'Private Jerk Chef Experience','category':'catering','price':80,'location':{'city':'Ocho Rios'},'ratings':{'average':4.8,'count':27},'emoji':'🍖'},
+                {'id':'s4','title':'Caribbean Fusion Catering','category':'catering','price':65,'location':{'city':'Kingston'},'ratings':{'average':4.7,'count':21},'emoji':'🍽️'},
+                {'id':'s5','title':'Breakfast in Paradise','category':'catering','price':45,'location':{'city':'Negril'},'ratings':{'average':4.9,'count':38},'emoji':'🥭'}
+            ] %}
+            <a href="/services/{{ svc.id }}" class="spot-card">
+                <div style="height:160px;background:linear-gradient(135deg,#F59E0B10,#F59E0B25);display:flex;align-items:center;justify-content:center;font-size:56px;">{{ svc.emoji }}</div>
+                <div class="spot-card-body">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <div class="spot-card-title">{{ svc.title }}</div>
+                            <div class="spot-card-location">{{ svc.location.city }} · {{ svc.category|capitalize }}</div>
                         </div>
+                        <div class="rating-badge flex-shrink-0"><span class="star">★</span> {{ svc.ratings.average }}</div>
+                    </div>
+                    <div class="spot-card-price mt-2">${{ svc.price }}<span>/session</span></div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Flights -->
+    <div>
+        <h2 class="section-heading">Popular flights from Jamaica</h2>
+        <p class="section-subheading">Top routes from Kingston &amp; Montego Bay</p>
+        <div class="scroll-row">
+            {% for fl in [
+                {'id':'f1','airline':'Caribbean Airlines','from':'Kingston','from_iata':'KIN','to':'Miami','to_iata':'MIA','price':185,'duration':'1h 50m','origin_lat':17.9357,'origin_lng':-76.7925,'dest_lat':25.7959,'dest_lng':-80.2870},
+                {'id':'f2','airline':'Caribbean Airlines','from':'Montego Bay','from_iata':'MBJ','to':'New York','to_iata':'JFK','price':280,'duration':'3h 45m','origin_lat':18.5036,'origin_lng':-77.9136,'dest_lat':40.6413,'dest_lng':-73.7781},
+                {'id':'f3','airline':'Air Canada','from':'Kingston','from_iata':'KIN','to':'Toronto','to_iata':'YYZ','price':320,'duration':'4h 10m','origin_lat':17.9357,'origin_lng':-76.7925,'dest_lat':43.6777,'dest_lng':-79.6248},
+                {'id':'f4','airline':'British Airways','from':'Montego Bay','from_iata':'MBJ','to':'London','to_iata':'LHR','price':650,'duration':'9h 30m','origin_lat':18.5036,'origin_lng':-77.9136,'dest_lat':51.4700,'dest_lng':-0.4543},
+                {'id':'f5','airline':'Copa Airlines','from':'Kingston','from_iata':'KIN','to':'Panama City','to_iata':'PTY','price':290,'duration':'2h 45m','origin_lat':17.9357,'origin_lng':-76.7925,'dest_lat':9.0714,'dest_lng':-79.3835}
+            ] %}
+            <a href="/flights/{{ fl.id }}" class="flight-card"
+               data-origin-lat="{{ fl.origin_lat }}" data-origin-lng="{{ fl.origin_lng }}"
+               data-dest-lat="{{ fl.dest_lat }}" data-dest-lng="{{ fl.dest_lng }}"
+               onclick="event.preventDefault(); window.SpotOverlay && window.SpotOverlay.previewFlight({{ fl.origin_lat }}, {{ fl.origin_lng }}, {{ fl.dest_lat }}, {{ fl.dest_lng }})">
+                <div class="flight-route">
+                    <div class="text-center">
+                        <div class="flight-city">{{ fl.from_iata }}</div>
+                        <div class="flight-iata">{{ fl.from }}</div>
+                    </div>
+                    <div class="flight-line">
+                        <div class="flight-plane-icon">✈️</div>
+                        <div class="flight-plane-line"></div>
+                        <div style="font-size:11px;color:var(--text-muted);">{{ fl.duration }}</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="flight-city">{{ fl.to_iata }}</div>
+                        <div class="flight-iata">{{ fl.to }}</div>
                     </div>
                 </div>
-            </form>
-        </div>
-
-        <!-- Category quick links -->
-        <div class="flex flex-wrap justify-center gap-4 mt-8">
-            <a href="/homes" class="bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-full px-5 py-2.5 text-sm font-semibold hover:bg-white/30 transition flex items-center gap-2">
-                <i data-lucide="home" class="w-4 h-4"></i> Homes
-            </a>
-            <a href="/experiences" class="bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-full px-5 py-2.5 text-sm font-semibold hover:bg-white/30 transition flex items-center gap-2">
-                <i data-lucide="compass" class="w-4 h-4"></i> Experiences
-            </a>
-            <a href="/parties" class="bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-full px-5 py-2.5 text-sm font-semibold hover:bg-white/30 transition flex items-center gap-2">
-                <i data-lucide="music" class="w-4 h-4"></i> Events
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Featured Listings -->
-{% if featured_listings %}
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="flex items-center justify-between mb-8">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-900">Featured Homes</h2>
-            <p class="text-gray-500 text-sm mt-1">Hand-picked places to stay</p>
-        </div>
-        <a href="/homes" class="text-blue-600 font-medium text-sm hover:underline flex items-center gap-1">
-            View all <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </a>
-    </div>
-    {% from 'components/listing_card.html' import listing_card %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {% for listing in featured_listings %}
-            {{ listing_card(listing, 'home') }}
-        {% endfor %}
-    </div>
-</section>
-{% else %}
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-    <div class="bg-gray-50 rounded-2xl p-12">
-        <i data-lucide="home" class="w-12 h-12 text-gray-300 mx-auto mb-4"></i>
-        <h2 class="text-xl font-semibold text-gray-700 mb-2">No listings yet</h2>
-        <p class="text-gray-500 mb-6">Be the first to list your home on Air.</p>
-        <a href="/auth/register" class="gradient-blue text-white font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition-opacity">
-            Get Started
-        </a>
-    </div>
-</section>
-{% endif %}
-
-<!-- Why Air Section -->
-<section class="bg-gray-50 py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <h2 class="text-2xl font-bold text-gray-900">Why Book With Air?</h2>
-            <p class="text-gray-500 mt-2">The smarter way to travel</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100">
-                <div class="w-14 h-14 gradient-blue rounded-2xl flex items-center justify-center mx-auto mb-5">
-                    <i data-lucide="zap" class="w-7 h-7 text-white"></i>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+                    <div style="font-size:13px;color:var(--text-muted);">{{ fl.airline }}</div>
+                    <div style="font-weight:700;font-size:18px;color:var(--text);">
+                        ${{ fl.price }}<span style="font-size:13px;font-weight:400;color:var(--text-muted);">/person</span>
+                    </div>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">AI-Powered</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Chat with AI voice agents on every listing. Get instant answers about amenities, availability, and local tips.
-                </p>
-            </div>
-            <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100">
-                <div class="w-14 h-14 gradient-blue rounded-2xl flex items-center justify-center mx-auto mb-5">
-                    <i data-lucide="shield-check" class="w-7 h-7 text-white"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">Verified Listings</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Every listing is verified by our team. Real photos, accurate descriptions, and honest reviews from real guests.
-                </p>
-            </div>
-            <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100">
-                <div class="w-14 h-14 gradient-blue rounded-2xl flex items-center justify-center mx-auto mb-5">
-                    <i data-lucide="lock" class="w-7 h-7 text-white"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">Secure Payments</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Your payment is protected until check-in. We hold funds securely and release them only after your stay begins.
-                </p>
-            </div>
+            </a>
+            {% endfor %}
         </div>
     </div>
-</section>
 
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/search_overlay.js"></script>
 {% endblock %}

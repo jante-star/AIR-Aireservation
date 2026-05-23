@@ -10,13 +10,16 @@ class Config:
     # Firebase
     FIREBASE_KEY_PATH = os.getenv('FIREBASE_KEY_PATH', './firebase-key.json')
     FIREBASE_STORAGE_BUCKET = os.getenv('FIREBASE_STORAGE_BUCKET', '')
+    FIREBASE_WEB_API_KEY = os.getenv('FIREBASE_WEB_API_KEY', '')
 
     # Retell AI
     RETELL_API_KEY = os.getenv('RETELL_API_KEY', '')
     RETELL_API_BASE_URL = os.getenv('RETELL_API_BASE_URL', 'https://api.retellai.com')
+    RETELL_AGENT_ID = os.getenv('RETELL_AGENT_ID', '')
 
-    # Google Places
+    # Google
     GOOGLE_PLACES_API_KEY = os.getenv('GOOGLE_PLACES_API_KEY', '')
+    GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', os.getenv('GOOGLE_PLACES_API_KEY', ''))
 
 class DevelopmentConfig(Config):
     DEBUG = True

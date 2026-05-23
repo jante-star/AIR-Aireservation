@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Services — Spot{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <h1 class="text-3xl font-bold mb-2" style="color:var(--text);">Services</h1>
+    <p class="mb-8" style="color:var(--text-muted);">Photography, catering, and more across Jamaica</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for svc in services %}
+        <a href="/services/{{ svc.id }}" class="spot-card">
+            {% if svc.images and svc.images|length > 0 %}
+            <img src="{{ svc.images[0] }}" alt="{{ svc.title }}" class="spot-card-img">
+            {% else %}
+            <div class="spot-card-img-placeholder" style="font-size:52px;">
+                {% if svc.category == 'photography' %}📸
+                {% elif svc.category == 'catering' %}🍽️
+                {% else %}🛎
+                {% endif %}
+            </div>
+            {% endif %}
+            <div class="spot-card-body">
+                <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                        <div class="spot-card-title">{{ svc.title }}</div>
+                        <div class="spot-card-location">{{ svc.location.get('city','') }} · {{ svc.category|capitalize }}</div>
+                    </div>
+                    {% if svc.ratings and svc.ratings.count > 0 %}
+                    <div class="rating-badge flex-shrink-0"><span class="star">★</span> {{ svc.ratings.average }}</div>
+                    {% endif %}
+                </div>
+                <div class="spot-card-price mt-2">${{ "%.0f"|format(svc.price) }}<span>/{{ svc.priceUnit or 'session' }}</span></div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

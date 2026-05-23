@@ -1,29 +1,26 @@
 {% extends 'base.html' %}
-{% block title %}Create Account — Air{% endblock %}
+{% block title %}Create Account — Spot{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-blue-50 flex items-center justify-center py-12 px-4">
-    <div class="w-full max-w-md">
+<div class="min-h-screen flex items-center justify-center py-12 px-4" style="background: var(--bg-secondary);">
+    <div class="w-full max-w-sm">
 
         <!-- Logo -->
         <div class="text-center mb-8">
             <a href="/" class="inline-flex flex-col items-center gap-2">
-                <div class="w-14 h-14 rounded-2xl gradient-blue flex items-center justify-center shadow-lg">
-                    <span class="text-white font-bold text-2xl">A</span>
+                <div class="w-14 h-14 rounded-2xl gradient-yellow flex items-center justify-center shadow-lg">
+                    <span class="text-black font-bold text-2xl">S</span>
                 </div>
-                <div>
-                    <div class="font-bold text-2xl gradient-text">Air</div>
-                    <div class="text-gray-400 text-sm">AI Reservations</div>
-                </div>
+                <div class="font-bold text-2xl gradient-yellow-text">Spot</div>
             </a>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <h1 class="text-2xl font-bold text-gray-900 mb-1">Create your account</h1>
-            <p class="text-gray-500 text-sm mb-6">Join Air — AI Reservations today</p>
+        <div class="rounded-2xl p-8 shadow-lg" style="background: var(--card-bg); border: 1px solid var(--border);">
+            <h1 class="text-2xl font-bold mb-1" style="color: var(--text);">Create your account</h1>
+            <p class="text-sm mb-6" style="color: var(--text-muted);">Join Spot — AI Reservations today</p>
 
             {% if error %}
-            <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 mb-5 text-sm flex items-center gap-2">
+            <div class="rounded-xl px-4 py-3 mb-5 text-sm flex items-center gap-2" style="background: #FEE2E2; border: 1px solid #FECACA; color: #DC2626;">
                 <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
                 {{ error }}
             </div>
@@ -31,58 +28,69 @@
 
             <form method="POST" action="/auth/register" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
-                    <input type="text" name="name" required
-                           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                    <label class="block text-sm font-semibold mb-1.5" style="color: var(--text);">Full Name</label>
+                    <input type="text" name="name" required value="{{ name or '' }}"
+                           class="w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                           style="border: 1.5px solid var(--border); background: var(--input-bg); color: var(--text); --tw-ring-color: #F59E0B;"
                            placeholder="Jane Smith">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-                    <input type="email" name="email" required
-                           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                    <label class="block text-sm font-semibold mb-1.5" style="color: var(--text);">Email</label>
+                    <input type="email" name="email" required value="{{ email or '' }}"
+                           class="w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                           style="border: 1.5px solid var(--border); background: var(--input-bg); color: var(--text); --tw-ring-color: #F59E0B;"
                            placeholder="you@example.com">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                    <label class="block text-sm font-semibold mb-1.5" style="color: var(--text);">Password</label>
                     <input type="password" name="password" required minlength="6"
-                           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                           class="w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                           style="border: 1.5px solid var(--border); background: var(--input-bg); color: var(--text); --tw-ring-color: #F59E0B;"
                            placeholder="At least 6 characters">
                 </div>
 
                 <!-- Role selection -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">I want to...</label>
+                    <label class="block text-sm font-semibold mb-2" style="color: var(--text);">I want to…</label>
                     <div class="grid grid-cols-2 gap-3">
                         <label class="cursor-pointer">
                             <input type="radio" name="role" value="guest" class="sr-only peer" checked>
-                            <div class="border-2 border-gray-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 rounded-xl p-4 text-center transition-all">
-                                <i data-lucide="search" class="w-6 h-6 mx-auto mb-1.5 text-gray-500 peer-checked:text-blue-600"></i>
-                                <div class="font-semibold text-sm text-gray-800">Book as Guest</div>
-                                <div class="text-gray-400 text-xs mt-0.5">Discover & book</div>
+                            <div class="rounded-xl p-4 text-center transition-all border-2" style="border-color: var(--border);"
+                                 onclick="this.parentElement.querySelector('div').style.borderColor='#F59E0B'; this.parentElement.querySelector('div').style.background='#FFFBEB';">
+                                <i data-lucide="search" class="w-6 h-6 mx-auto mb-1.5" style="color: var(--text-muted);"></i>
+                                <div class="font-bold text-sm" style="color: var(--text);">Book as Guest</div>
+                                <div class="text-xs mt-0.5" style="color: var(--text-muted);">Discover &amp; book</div>
                             </div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="role" value="host" class="sr-only peer">
-                            <div class="border-2 border-gray-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 rounded-xl p-4 text-center transition-all">
-                                <i data-lucide="home" class="w-6 h-6 mx-auto mb-1.5 text-gray-500 peer-checked:text-blue-600"></i>
-                                <div class="font-semibold text-sm text-gray-800">Host on Air</div>
-                                <div class="text-gray-400 text-xs mt-0.5">List & earn</div>
+                            <div class="rounded-xl p-4 text-center transition-all border-2" style="border-color: var(--border);"
+                                 onclick="document.querySelectorAll('[name=role]')[0].closest('label').querySelector('div').style.borderColor='var(--border)'; document.querySelectorAll('[name=role]')[0].closest('label').querySelector('div').style.background=''; this.style.borderColor='#F59E0B'; this.style.background='#FFFBEB';">
+                                <i data-lucide="home" class="w-6 h-6 mx-auto mb-1.5" style="color: var(--text-muted);"></i>
+                                <div class="font-bold text-sm" style="color: var(--text);">Host on Spot</div>
+                                <div class="text-xs mt-0.5" style="color: var(--text-muted);">List &amp; earn</div>
                             </div>
                         </label>
                     </div>
                 </div>
 
                 <button type="submit"
-                        class="w-full gradient-blue text-white font-semibold py-2.5 rounded-xl hover:opacity-90 transition-opacity mt-2">
+                        class="w-full gradient-yellow text-black font-bold py-3 rounded-xl hover:opacity-90 transition-all text-sm mt-2 shadow-sm">
                     Create Account
                 </button>
             </form>
 
-            <p class="text-center text-gray-500 text-sm mt-6">
+            <div class="auth-divider mt-5"><span>or</span></div>
+
+            <p class="text-center text-sm" style="color: var(--text-muted);">
                 Already have an account?
-                <a href="/auth/login" class="text-blue-600 font-medium hover:underline">Log in</a>
+                <a href="/auth/login" class="font-bold hover:underline" style="color: var(--primary);">Log in</a>
             </p>
         </div>
+
+        <p class="text-center text-xs mt-6" style="color: var(--text-muted);">
+            By signing up you agree to Spot's <a href="#" class="underline">Terms</a> and <a href="#" class="underline">Privacy Policy</a>.
+        </p>
     </div>
 </div>
 {% endblock %}

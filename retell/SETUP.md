@@ -1,4 +1,4 @@
-# Retell AI Setup Guide for Air Reservations
+# Retell AI Setup Guide for Spot Reservations
 
 ## Step 1 — Create three Knowledge Bases
 
@@ -6,9 +6,9 @@ In the Retell dashboard (app.retellai.com → Knowledge Base):
 
 | Name | Purpose |
 |------|---------|
-| Air Homes | All home/hotel listings (user-added + Google Places imports) |
-| Air Experiences | Guided tours, activities, classes |
-| Air Events | Parties, concerts, festivals |
+| Spot Homes | All home/hotel listings (user-added + Google Places imports) |
+| Spot Experiences | Guided tours, activities, classes |
+| Spot Events | Parties, concerts, festivals |
 
 Leave them empty — the backfill script fills them automatically.
 Copy each `knowledge_base_id` into your `.env`.
@@ -22,7 +22,7 @@ Copy each `knowledge_base_id` into your `.env`.
 3. Under **Knowledge Bases**, add the three KB IDs from Step 1
 4. Under **Tools / General Tools**, paste the contents of `retell/tools.json`
    - Replace every `{{PUBLIC_BASE_URL}}` with your deployed site URL
-     (e.g. `https://air.yourdomain.com`)
+     (e.g. `https://spot.yourdomain.com`)
 5. Save and copy the `llm_id`
 
 ---

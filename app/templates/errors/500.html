@@ -1,19 +1,18 @@
 {% extends 'base.html' %}
-{% block title %}Server Error — Air{% endblock %}
-
+{% block title %}Server Error — Spot{% endblock %}
 {% block content %}
-<div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+<div class="min-h-screen flex items-center justify-center px-4" style="background: var(--bg-secondary);">
     <div class="text-center max-w-md">
-        <div class="w-20 h-20 rounded-2xl gradient-blue flex items-center justify-center mx-auto mb-6">
-            <span class="text-white font-bold text-2xl">A</span>
+        <div class="w-20 h-20 rounded-2xl gradient-yellow flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <span class="text-black font-bold text-2xl">S</span>
         </div>
-        <h1 class="text-7xl font-bold gradient-text mb-4">500</h1>
-        <h2 class="text-2xl font-bold text-gray-900 mb-3">Something went wrong</h2>
-        <p class="text-gray-500 mb-8">
-            We hit an unexpected error on our end. Our team has been notified. Please try again in a moment.
+        <h1 class="text-7xl font-black gradient-yellow-text mb-4">500</h1>
+        <h2 class="text-2xl font-bold mb-3" style="color: var(--text);">Something went wrong</h2>
+        <p class="mb-8" style="color: var(--text-muted);">
+            We hit an unexpected error. Please try again in a moment.
         </p>
-        <a href="/" class="gradient-blue text-white font-semibold px-8 py-3 rounded-xl hover:opacity-90 transition-opacity inline-block">
-            Back to Home
+        <a href="/" class="gradient-yellow text-black font-bold px-8 py-3 rounded-xl hover:opacity-90 transition-opacity inline-block shadow-sm">
+            Back to Explore
         </a>
     </div>
 </div>
