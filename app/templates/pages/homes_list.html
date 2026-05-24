@@ -7,16 +7,24 @@
     <!-- Header -->
     <div class="flex items-start justify-between mb-8 gap-4 flex-wrap">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">Homes on Air</h1>
-            <p class="text-gray-500 mt-1">Find your perfect place to stay</p>
+            <h1 class="text-3xl font-bold" style="color:var(--text);">Homes</h1>
+            <p class="mt-1" style="color:var(--text-muted);">Find your perfect place to stay</p>
         </div>
-        {% if session.get('role') == 'host' %}
-        <a href="/homes/import-from-places"
-           class="flex items-center gap-2 border border-blue-200 bg-blue-50 text-blue-700 font-semibold px-4 py-2.5 rounded-xl text-sm hover:bg-blue-100 transition-colors">
-            <i data-lucide="map-pin" class="w-4 h-4"></i>
-            Import from Google Places
-        </a>
-        {% endif %}
+        <div class="flex items-center gap-3">
+            <a href="/homes/map{% if request.args.get('city') %}?city={{ request.args.get('city') }}{% endif %}"
+               class="flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-colors hover:opacity-80"
+               style="border-color:var(--border); background:var(--bg); color:var(--text);">
+                <i data-lucide="map" class="w-4 h-4"></i>
+                Map view
+            </a>
+            {% if session.get('role') == 'host' %}
+            <a href="/homes/import-from-places"
+               class="flex items-center gap-2 gradient-yellow text-black font-semibold px-4 py-2.5 rounded-xl text-sm hover:opacity-90 transition-opacity">
+                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                Import from Places
+            </a>
+            {% endif %}
+        </div>
     </div>
 
     <!-- Filter bar -->

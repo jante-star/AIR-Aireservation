@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+{% block title %}Spot — Homes Map{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Override main flex so map fills the full remaining height */
+main.flex-1 { display: flex; flex-direction: column; overflow: hidden; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="homes-map-root">
+
+    <!-- ── Sidebar ── -->
+    <aside class="homes-map-sidebar">
+
+        <!-- Header: search + toggle -->
+        <div class="homes-map-sidebar-header">
+            <form method="GET" action="/homes/map" style="display:flex;flex:1;gap:8px;align-items:center;min-width:0;">
+                <input type="text" name="city" value="{{ city }}" placeholder="Search city…" autocomplete="off">
+                <button type="submit" class="homes-map-search-btn" aria-label="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="7"/><line x1="19" y1="19" x2="14.65" y2="14.65"/>
+                    </svg>
+                </button>
+            </form>
+            <a href="/homes{% if city %}?city={{ city }}{% endif %}"
+               style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text);text-decoration:none;white-space:nowrap;padding:6px 10px;border-radius:9999px;border:1px solid var(--border);transition:background 0.15s;"
+               onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background=''">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="10" y="3" width="7" height="7"/><rect x="3" y="10" width="7" height="7"/><rect x="10" y="10" width="7" height="7"/>
+                </svg>
+                List
+            </a>
+        </div>
+
+        <!-- Result count -->
+        <div style="padding:10px 16px 4px;font-size:12px;color:var(--text-muted);flex-shrink:0;">
+            {% set card_list = homes if homes else placeholder_homes %}
+            <span id="hmap-count">
+                {% if homes %}{{ homes|length }} home{{ 's' if homes|length != 1 else '' }}{% else %}5 homes (sample){% endif %}
+            </span>
+        </div>
+
+        <!-- Card list -->
+        <div class="homes-map-sidebar-list" id="hmap-card-list">
+
+            {% if homes %}
+                {% for h in homes %}
+                {% set loc = h.get('location', {}) %}
+                {% set lat = loc.get('latitude') or loc.get('lat') %}
+                {% set lng = loc.get('longitude') or loc.get('lng') %}
+                {% set price = h.get('price', 0) %}
+                {% set ratings = h.get('ratings', {}) %}
+                <a href="/homes/{{ h.id }}"
+                   class="hmap-card"
+                   data-id="{{ h.id }}"
+                   {% if lat and lng %}data-lat="{{ lat }}" data-lng="{{ lng }}"{% endif %}
+                   data-price="{{ price }}"
+                   onclick="SpotRecent && SpotRecent.save({{ h | tojson }}, 'home')">
+                    {% if h.images and h.images|length > 0 %}
+                    <img src="{{ h.images[0] }}" alt="{{ h.title }}" class="hmap-card-img">
+                    {% else %}
+                    <div class="hmap-card-img">🏠</div>
+                    {% endif %}
+                    <div class="hmap-card-body">
+                        <div>
+                            <div class="hmap-card-title">{{ h.title }}</div>
+                            <div class="hmap-card-loc">
+                                {{ loc.get('city', '') }}{% if loc.get('country') %}, {{ loc.country }}{% endif %}
+                                · {{ h.get('category', 'home')|capitalize }}
+                            </div>
+                        </div>
+                        <div class="hmap-card-footer">
+                            <div class="hmap-card-price">${{ "%.0f"|format(price) }}<span>/night</span></div>
+                            {% if ratings and ratings.get('count', 0) > 0 %}
+                            <div class="rating-badge">
+                                <span class="star">★</span>{{ "%.1f"|format(ratings.average) }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+
+            {% else %}
+                <!-- Placeholder cards shown when Firestore is empty -->
+                {% for ph in [
+                    {'id':'ph1','title':'Sunset Villa Mandeville','category':'villa','price':150,'city':'Mandeville','lat':18.0447,'lng':-77.5073,'emoji':'🏡','rating':4.9,'count':24},
+                    {'id':'ph2','title':'Kingston City Loft','category':'apartment','price':85,'city':'Kingston','lat':17.9957,'lng':-76.7936,'emoji':'🏢','rating':4.7,'count':18},
+                    {'id':'ph3','title':'Treasure Beach Cottage','category':'cottage','price':120,'city':'St. Elizabeth','lat':17.9000,'lng':-77.7600,'emoji':'🏖️','rating':4.8,'count':31},
+                    {'id':'ph4','title':'Montego Bay Marina View','category':'apartment','price':200,'city':'Montego Bay','lat':18.4762,'lng':-77.8939,'emoji':'🌊','rating':4.9,'count':12},
+                    {'id':'ph5','title':'Ocho Rios Garden House','category':'house','price':165,'city':'Ocho Rios','lat':18.4055,'lng':-77.0998,'emoji':'🌿','rating':4.6,'count':9}
+                ] %}
+                <a href="/homes/{{ ph.id }}"
+                   class="hmap-card"
+                   data-id="{{ ph.id }}"
+                   data-lat="{{ ph.lat }}" data-lng="{{ ph.lng }}"
+                   data-price="{{ ph.price }}">
+                    <div class="hmap-card-img">{{ ph.emoji }}</div>
+                    <div class="hmap-card-body">
+                        <div>
+                            <div class="hmap-card-title">{{ ph.title }}</div>
+                            <div class="hmap-card-loc">{{ ph.city }} · {{ ph.category|capitalize }}</div>
+                        </div>
+                        <div class="hmap-card-footer">
+                            <div class="hmap-card-price">${{ ph.price }}<span>/night</span></div>
+                            <div class="rating-badge"><span class="star">★</span>{{ ph.rating }}</div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            {% endif %}
+
+        </div>
+    </aside>
+
+    <!-- ── Map panel ── -->
+    <div class="homes-map-panel">
+        <div id="hmap-google-map">
+            <div class="hmap-map-placeholder" id="hmap-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.25;"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                <span>Interactive map</span>
+                <span style="font-size:12px;">Add <code>GOOGLE_MAPS_API_KEY</code> to your .env to enable</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    'use strict';
+
+    var mapEl = document.getElementById('hmap-google-map');
+    var placeholder = document.getElementById('hmap-placeholder');
+    var cards = Array.from(document.querySelectorAll('.hmap-card[data-lat]'));
+    var map = null;
+    var markers = {};   // id → {marker, defaultIcon, activeIcon}
+    var activeId = null;
+
+    // ── Build SVG pill icons ─────────────────────────────────────────────────
+    function pillIcon(price, active) {
+        var label = price >= 1000 ? '$' + Math.round(price / 1000) + 'k' : '$' + Math.round(price);
+        var w = label.length * 9 + 26;
+        var h = 34;
+        var bg = active ? '#F59E0B' : (document.documentElement.getAttribute('data-theme') === 'dark' ? '#1a1a1a' : '#ffffff');
+        var txt = active ? '#0A0A0A' : 'currentColor';
+        // Use theme-aware fallback color for SVG text
+        var textColor = active ? '#0A0A0A' : (document.documentElement.getAttribute('data-theme') === 'dark' ? '#F9FAFB' : '#0A0A0A');
+        var border = active ? '' : ' stroke="#E5E7EB" stroke-width="1.5"';
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">' +
+            '<rect x="0" y="0" width="' + w + '" height="' + h + '" rx="' + (h / 2) + '" fill="' + bg + '"' + border + ' filter="drop-shadow(0 3px 8px rgba(0,0,0,0.18))"/>' +
+            '<text x="' + (w / 2) + '" y="' + (h * 0.65) + '" text-anchor="middle" fill="' + textColor + '" ' +
+            'font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="13" font-weight="700">' + label + '</text></svg>';
+        return {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+            scaledSize: new google.maps.Size(w, h),
+            anchor: new google.maps.Point(w / 2, h),
+        };
+    }
+
+    // ── Activate a card + marker ─────────────────────────────────────────────
+    function setActive(id) {
+        if (activeId && markers[activeId]) {
+            markers[activeId].marker.setIcon(markers[activeId].defaultIcon);
+            markers[activeId].marker.setZIndex(1);
+        }
+        document.querySelectorAll('.hmap-card').forEach(function (c) { c.classList.remove('active'); });
+
+        activeId = id;
+        if (id && markers[id]) {
+            markers[id].marker.setIcon(markers[id].activeIcon);
+            markers[id].marker.setZIndex(10);
+        }
+        var card = document.querySelector('.hmap-card[data-id="' + id + '"]');
+        if (card) {
+            card.classList.add('active');
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    // ── Google Maps init ─────────────────────────────────────────────────────
+    function initMap() {
+        if (!mapEl) return;
+        if (placeholder) placeholder.style.display = 'none';
+
+        map = new google.maps.Map(mapEl, {
+            center: { lat: 18.1096, lng: -77.2975 },
+            zoom: 9,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false,
+            gestureHandling: 'greedy',
+            styles: getMapStyles(),
+        });
+
+        // Geolocation fallback
+        if (navigator.geolocation && cards.length === 0) {
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                map.setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+                map.setZoom(11);
+            }, null, { timeout: 5000 });
+        }
+
+        // Add price markers for all cards that have coords
+        var bounds = new google.maps.LatLngBounds();
+        var hasBounds = false;
+
+        cards.forEach(function (card) {
+            var lat = parseFloat(card.dataset.lat);
+            var lng = parseFloat(card.dataset.lng);
+            var price = parseFloat(card.dataset.price) || 0;
+            var id = card.dataset.id;
+            if (isNaN(lat) || isNaN(lng)) return;
+
+            var pos = { lat: lat, lng: lng };
+            bounds.extend(pos);
+            hasBounds = true;
+
+            var defIcon = pillIcon(price, false);
+            var actIcon = pillIcon(price, true);
+
+            var marker = new google.maps.Marker({
+                position: pos,
+                map: map,
+                icon: defIcon,
+                title: card.querySelector('.hmap-card-title') ? card.querySelector('.hmap-card-title').textContent.trim() : '',
+                zIndex: 1,
+            });
+
+            markers[id] = { marker: marker, defaultIcon: defIcon, activeIcon: actIcon };
+
+            marker.addListener('click', function () {
+                setActive(id);
+            });
+        });
+
+        if (hasBounds) {
+            map.fitBounds(bounds, 60);
+        }
+
+        // Card hover → highlight marker
+        cards.forEach(function (card) {
+            var id = card.dataset.id;
+            card.addEventListener('mouseenter', function () {
+                if (id !== activeId && markers[id]) {
+                    markers[id].marker.setIcon(markers[id].activeIcon);
+                    markers[id].marker.setZIndex(5);
+                }
+            });
+            card.addEventListener('mouseleave', function () {
+                if (id !== activeId && markers[id]) {
+                    markers[id].marker.setIcon(markers[id].defaultIcon);
+                    markers[id].marker.setZIndex(1);
+                }
+            });
+            card.addEventListener('click', function (e) {
+                // Allow navigation; just update active state first
+                setActive(id);
+            });
+        });
+    }
+
+    // ── Map styles (minimal, dark-mode aware) ────────────────────────────────
+    function getMapStyles() {
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (!dark) return [
+            { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+            { featureType: 'transit', stylers: [{ visibility: 'simplified' }] },
+        ];
+        return [
+            { elementType: 'geometry', stylers: [{ color: '#1a1a1a' }] },
+            { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a1a' }] },
+            { elementType: 'labels.text.fill', stylers: [{ color: '#9ca3af' }] },
+            { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2a2a2a' }] },
+            { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#111' }] },
+            { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] },
+            { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+        ];
+    }
+
+    // ── Bootstrap Maps API ───────────────────────────────────────────────────
+    var key = window._mapsApiKey;
+    if (key) {
+        if (window.google && window.google.maps) {
+            initMap();
+        } else {
+            window._hmapReady = initMap;
+            var s = document.createElement('script');
+            s.src = 'https://maps.googleapis.com/maps/api/js?key=' + key + '&callback=_hmapReady';
+            s.async = true;
+            s.defer = true;
+            s.onerror = function () {
+                if (placeholder) {
+                    placeholder.querySelector('span').textContent = 'Could not load Google Maps. Check your API key.';
+                }
+            };
+            document.head.appendChild(s);
+        }
+    }
+})();
+</script>
+{% endblock %}

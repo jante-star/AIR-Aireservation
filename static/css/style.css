@@ -620,3 +620,166 @@ nav.nav-solid {
     .car-card { width: 240px; }
     .cat-tab { padding: 10px 10px; font-size: 11px; }
 }
+
+/* ── Stays Map page ─────────────────────────────────────────────────────────── */
+.homes-map-root {
+    display: flex;
+    height: calc(100vh - 64px);
+    overflow: hidden;
+}
+.homes-map-sidebar {
+    width: 420px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+}
+.homes-map-sidebar-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+.homes-map-sidebar-header input[type="text"] {
+    flex: 1;
+    min-width: 120px;
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    padding: 8px 16px;
+    font-size: 13px;
+    background: var(--input-bg);
+    color: var(--text);
+    outline: none;
+}
+.homes-map-sidebar-header input[type="text"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+}
+.homes-map-search-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+}
+.homes-map-search-btn:hover { background: var(--primary-dark); }
+.homes-map-sidebar-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+.homes-map-panel {
+    flex: 1;
+    position: relative;
+    min-width: 0;
+}
+#hmap-google-map {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-secondary);
+}
+
+/* Horizontal listing card for the map sidebar */
+.hmap-card {
+    display: flex;
+    gap: 14px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    border-left-width: 3px;
+    border-left-color: transparent;
+    margin-bottom: 8px;
+    background: var(--card-bg);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.2s ease, border-left-color 0.2s ease;
+    cursor: pointer;
+}
+.hmap-card:hover,
+.hmap-card.active {
+    box-shadow: var(--shadow-lg);
+    border-left-color: var(--primary);
+}
+.hmap-card-img {
+    width: 106px;
+    height: 88px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #F59E0B18, #F59E0B38);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}
+.hmap-card-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2px 0;
+}
+.hmap-card-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hmap-card-loc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hmap-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+}
+.hmap-card-price {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+}
+.hmap-card-price span {
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.hmap-map-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* Mobile: sidebar becomes top tray */
+@media (max-width: 768px) {
+    .homes-map-root { flex-direction: column; }
+    .homes-map-sidebar { width: 100%; height: 45%; }
+    .homes-map-panel { flex: 1; }
+}

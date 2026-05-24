@@ -6,6 +6,16 @@ from app.utils.decorators import login_required, host_required
 
 homes_bp = Blueprint('homes', __name__, url_prefix='/homes')
 
+@homes_bp.route('/map')
+def map_view():
+    city = request.args.get('city', '').strip()
+    homes = []
+    try:
+        homes = Home.search({'city': city}) if city else (Home.get_featured() or [])
+    except Exception:
+        pass
+    return render_template('pages/homes_map.html', homes=homes, city=city)
+
 @homes_bp.route('/')
 def list_homes():
     filters = {
