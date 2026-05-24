@@ -13,7 +13,7 @@
 <!-- Search bar -->
 <div class="hero-search-wrap fade-in-up">
     <p class="hero-tagline">Find your perfect stay, experience, or adventure</p>
-    <button class="search-pill" id="search-trigger" onclick="window.SpotOverlay && window.SpotOverlay.open('homes')">
+    <button class="search-pill" id="search-trigger" onclick="window.location.href='/homes/map'">
         <div class="search-pill-section">
             <span class="search-pill-label">Where</span>
             <span class="search-pill-value">Search destinations</span>
@@ -57,79 +57,6 @@
         </a>
     </div>
 </div>
-
-<!-- Search overlay -->
-<div id="search-overlay" class="search-overlay" style="display:none;">
-    <div class="search-overlay-header">
-        <div class="max-w-5xl mx-auto">
-            <div class="flex items-center gap-3 mb-5 overflow-x-auto pb-1" style="scrollbar-width:none;">
-                <button class="overlay-cat-pill active" data-ocat="homes" onclick="window.SpotOverlay.switchCat('homes')">🏠 Homes</button>
-                <button class="overlay-cat-pill" data-ocat="experiences" onclick="window.SpotOverlay.switchCat('experiences')">🎯 Experiences</button>
-                <button class="overlay-cat-pill" data-ocat="services" onclick="window.SpotOverlay.switchCat('services')">🛎 Services</button>
-                <button class="overlay-cat-pill" data-ocat="flights" onclick="window.SpotOverlay.switchCat('flights')">✈️ Flights</button>
-                <button class="overlay-cat-pill" data-ocat="cars" onclick="window.SpotOverlay.switchCat('cars')">🚗 Cars</button>
-                <button onclick="window.SpotOverlay.close()" class="ml-auto flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center border hover:bg-gray-100 transition-colors" style="border-color:var(--border); color:var(--text);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-            </div>
-            <!-- Homes / Experiences / Services fields -->
-            <div id="overlay-fields-homes" class="overlay-fields">
-                <div class="overlay-field"><label>Where</label><input type="text" id="where-homes" placeholder="Search destinations" autocomplete="off"></div>
-                <div class="overlay-field"><label>Check in</label><input type="date" id="checkin-homes"></div>
-                <div class="overlay-field"><label>Check out</label><input type="date" id="checkout-homes"></div>
-                <div class="overlay-field" style="border-right:none;"><label>Guests</label><input type="number" id="guests-homes" placeholder="Add guests" min="1" max="20"></div>
-                <button class="overlay-search-btn" onclick="window.SpotOverlay.search('homes')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    Search
-                </button>
-            </div>
-            <!-- Flights fields -->
-            <div id="overlay-fields-flights" class="overlay-fields hidden">
-                <div class="overlay-field"><label>From</label><input type="text" id="from-flights" placeholder="City or airport" autocomplete="off"></div>
-                <div class="overlay-field"><label>To</label><input type="text" id="to-flights" placeholder="City or airport" autocomplete="off"></div>
-                <div class="overlay-field"><label>Departure</label><input type="date" id="depart-flights"></div>
-                <div class="overlay-field" style="border-right:none;"><label>Passengers</label><input type="number" id="pax-flights" placeholder="1" min="1" max="9"></div>
-                <button class="overlay-search-btn" onclick="window.SpotOverlay.searchFlights()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    Search
-                </button>
-            </div>
-            <!-- Cars fields -->
-            <div id="overlay-fields-cars" class="overlay-fields hidden">
-                <div class="overlay-field"><label>Where</label><input type="text" id="where-cars" placeholder="Pick-up location" autocomplete="off"></div>
-                <div class="overlay-field"><label>Pick up</label><input type="date" id="pickup-cars"></div>
-                <div class="overlay-field" style="border-right:none;"><label>Drop off</label><input type="date" id="dropoff-cars"></div>
-                <button class="overlay-search-btn" onclick="window.SpotOverlay.search('cars')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    Search
-                </button>
-            </div>
-            <!-- Generic fields -->
-            <div id="overlay-fields-generic" class="overlay-fields hidden">
-                <div class="overlay-field"><label>Where</label><input type="text" id="where-generic" placeholder="Search" autocomplete="off"></div>
-                <div class="overlay-field"><label>When</label><input type="date" id="when-generic"></div>
-                <div class="overlay-field" style="border-right:none;"><label>People</label><input type="number" id="people-generic" placeholder="Add guests" min="1"></div>
-                <button class="overlay-search-btn" onclick="window.SpotOverlay.search(window.SpotOverlay.currentCat)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    Search
-                </button>
-            </div>
-        </div>
-    </div>
-    <!-- Map -->
-    <div class="search-overlay-map">
-        <div id="spot-map">
-            <div class="map-placeholder" id="map-placeholder">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.3;"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-                <span>Interactive map appears here</span>
-            </div>
-        </div>
-        <svg id="flight-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;display:none;"></svg>
-        <div id="flight-plane" style="display:none;position:absolute;font-size:20px;pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));">✈️</div>
-    </div>
-</div>
-<div id="overlay-backdrop" onclick="window.SpotOverlay && window.SpotOverlay.close()"
-     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199;"></div>
 
 <!-- Listing sections -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 fade-in-up-delay-2">
@@ -251,7 +178,7 @@
             <a href="/flights/{{ fl.id }}" class="flight-card"
                data-origin-lat="{{ fl.origin_lat }}" data-origin-lng="{{ fl.origin_lng }}"
                data-dest-lat="{{ fl.dest_lat }}" data-dest-lng="{{ fl.dest_lng }}"
-               onclick="event.preventDefault(); window.SpotOverlay && window.SpotOverlay.previewFlight({{ fl.origin_lat }}, {{ fl.origin_lng }}, {{ fl.dest_lat }}, {{ fl.dest_lng }})">
+               onclick="window.location.href='/flights/{{ fl.id }}'; return false;">
                 <div class="flight-route">
                     <div class="text-center">
                         <div class="flight-city">{{ fl.from_iata }}</div>
@@ -281,6 +208,4 @@
 </div>
 {% endblock %}
 
-{% block extra_js %}
-<script src="/static/js/search_overlay.js"></script>
 {% endblock %}
